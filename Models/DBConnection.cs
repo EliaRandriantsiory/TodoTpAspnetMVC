@@ -10,27 +10,55 @@ namespace Todo.Models
     public class DBConnection
     {
         public static NpgsqlConnection connectionString = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["TodoDbConnection"].ConnectionString);
-        
-        public static void CreationCompte(Utilisateur utilisateur)
+
+
+        public static bool AuthentificationUtilisateur(Utilisateur utilisateur)
         {
-            var req = $"INSERT INTO utilisateur(nomutilisateur, motdepasse) VALUES ('{utilisateur.NomUtilisateur}','{utilisateur.MotDePasse}');";
+            var req = $"SELECT * FROM utilisateur WHERE nomutilisateur='{utilisateur.NomUtilisateur}' AND motdepasse='{utilisateur.MotDePasse}';";
+            bool hasUtilisateur = false;
+            
+                try {
+                    connectionString.Open();
 
-            try
-            {
-                connectionString.Open();
+                    var cmd = new NpgsqlCommand(req, connectionString);
+                    var reader = cmd.ExecuteReader();
 
-                var cmd = new NpgsqlCommand(req, connectionString);
-                cmd.ExecuteNonQuery();
+                    if (reader.HasRows)
+                    {
+                        hasUtilisateur = true;
 
-                connectionString.Close();
+                    }
+                    connectionString.Close();
 
-
-            }catch (Exception e)
+                } catch (Exception e)
                 {
-                throw e;
+
+                    throw e;
+                }
+                return hasUtilisateur;
+
+
+            }
+            public static void CreationCompte(Utilisateur utilisateur)
+            {
+                var req = $"INSERT INTO utilisateur(nomutilisateur, motdepasse) VALUES ('{utilisateur.NomUtilisateur}','{utilisateur.MotDePasse}');";
+
+                try
+                {
+                    connectionString.Open();
+
+                    var cmd = new NpgsqlCommand(req, connectionString);
+                    cmd.ExecuteNonQuery();
+
+                    connectionString.Close();
+
+
+                } catch (Exception e)
+                {
+                    throw e;
                 }
 
 
+            }
         }
     }
-}
