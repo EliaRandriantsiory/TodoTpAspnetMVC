@@ -18,6 +18,13 @@ namespace Todo.Controllers
         public ActionResult Login(Utilisateur utilisateur)
         {
             return Content("Login");
-    }
+        }
+
+        [HttpGet]
+        public ActionResult CreationCompte()
+        {
+            return View();
+        }
+
     }
 }
